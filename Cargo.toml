@@ -1,9 +1,9 @@
 [package]
-name = "ffi-playground"
+name = "ffi_playground"
 version = "0.1.0"
 authors = ["Gosuke Miyashita <gosukenator@gmail.com>"]
 
 [dependencies]
 
 [lib]
-crate-type = ["dylib"]
+crate-type = ["rlib", "dylib"]
