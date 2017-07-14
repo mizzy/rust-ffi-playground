@@ -1,3 +1,7 @@
 target/
 **/*.rs.bk
 Cargo.lock
+.bundle/
+vendor/
+Gemfile.lock
+
