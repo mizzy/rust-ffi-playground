@@ -6,7 +6,10 @@ module Sample
   ffi_lib 'target/debug/libffi_playground.dylib'
 
   class SampleStruct < FFI::Struct
-    layout :int, :int
+    layout(
+           :int, :int,
+           :str, :string,
+           )
   end
 
   attach_function :new, [], SampleStruct.by_value
@@ -14,3 +17,4 @@ end
 
 s = Sample.new()
 puts s[:int]
+puts s[:str]
