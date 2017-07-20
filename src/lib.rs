@@ -1,21 +1,50 @@
-extern crate libc;
+use std::fmt::Debug;
 
-use libc::*;
-use std::ffi::CString;
-
-#[derive(Debug)]
-#[repr(C)]
-pub struct SampleStruct {
-    pub int: i32,
-    pub str: *const c_char,
+pub trait FooTrait: Debug {
+    fn new() -> Self where Self: Sized;
 }
 
-impl SampleStruct {
-    #[no_mangle]
-    pub extern "C" fn new() -> Self {
-        SampleStruct {
-            int: 1,
-            str: CString::new("aaaaaa").unwrap().into_raw(),
-        }
+#[derive(Debug)]
+pub struct Foo;
+
+impl FooTrait for Foo {
+    fn new() -> Foo {
+        Foo
     }
+}
+
+#[no_mangle]
+pub extern "C" fn foo_free(ptr: *mut Foo) {
+    if ptr.is_null() {
+        return;
+    }
+    unsafe {
+        Box::from_raw(ptr);
+    }
+}
+
+#[no_mangle]
+pub extern "C" fn foo_new() -> *const Foo {
+    Box::into_raw(Box::new(Foo::new()))
+}
+
+#[no_mangle]
+pub extern "C" fn foo_take_as_struct(ptr: *const Foo) {
+    let foo = unsafe {
+        assert!(!ptr.is_null());
+        &*ptr
+    };
+
+    println!("{:?}", foo);
+}
+
+#[no_mangle]
+pub extern "C" fn foo_take_as_trait(ptr: *const FooTrait) {
+    let foo = unsafe {
+        // assert!(!ptr.is_null());
+        //              ^^^^^^^ the trait `std::marker::Sized` is not implemented for `FooTrait`
+        &*ptr
+    };
+
+    println!("{:?}", foo);
 }
